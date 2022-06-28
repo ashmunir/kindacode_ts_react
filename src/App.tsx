@@ -1,26 +1,71 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-function App() {
+const App = () => {
+  // Show or hide the custom context menu
+  const [isShown, setIsShown] = useState(false);
+
+  // The position of the custom context menu
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  // Show the custom context menu
+  const showContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    // Disable the default context menu
+    event.preventDefault();
+
+    setIsShown(false);
+    const newPosition = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+
+    setPosition(newPosition);
+    setIsShown(true);
+  };
+
+  // Hide the custom context menu
+  const hideContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    setIsShown(false);
+  };
+
+  // Do what you want when an option in the context menu is selected
+  const [selectedValue, setSelectedValue] = useState<String>();
+  const doSomething = (selectedValue: String) => {
+    setSelectedValue(selectedValue);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div
+      className="container"
+      onContextMenu={showContextMenu}
+      onClick={hideContextMenu}
+    >
+      <h2>KindaCode.com</h2>
+      {selectedValue && (
+        <h1>
+          "{selectedValue}" is selected
+        </h1>
+      )}
+
+      {/* Define the custom context menu */}
+      {isShown && (
+        <div
+          style={{ top: position.y, left: position.x }}
+          className="custom-context-menu"
         >
-          Learn React
-        </a>
-      </header>
+          <div className="option" onClick={() => doSomething("Option 1")}>
+            Option #1
+          </div>
+          <div className="option" onClick={() => doSomething("Option 2")}>
+            Option #2
+          </div>
+          <div className="option" onClick={() => doSomething("Option 3")}>
+            Option #3
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
